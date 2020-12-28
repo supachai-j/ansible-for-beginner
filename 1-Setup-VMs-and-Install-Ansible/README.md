@@ -20,8 +20,18 @@ above with their current state. For more information about a specific
 VM, run `vagrant status NAME`.
 ```
 
+ทำการ Change ssh configuration แป๊บ
+```
+vagrant ssh target1 -c "sudo sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config && sudo sed -ri 's/^PasswordAuthentication no\s+.*/PasswordAuthentication yes/' /etc/ssh/sshd_config && sudo systemctl restart sshd"
+
+vagrant ssh target2 -c "sudo sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config && sudo sed -ri 's/^PasswordAuthentication no\s+.*/PasswordAuthentication yes/' /etc/ssh/sshd_config && sudo systemctl restart sshd"
+```
+
+
 ติดตั้ง Ansible บน master โหนด 
 ```
+$vagrant ssh master
+
 [vagrant@master ~]$sudo yum install epel-release -y
 [vagrant@master ~]$sudo yum install ansible -y
 [vagrant@master ~]$ ansible --version
@@ -43,7 +53,7 @@ $ vagrant ssh master
 [vagrant@master ~]$mkdir test-project
 [vagrant@master ~$cd test-project
 [vagrant@master test-project]$cat > inventory.txt
-target1 ansible_host=192.168.55.21 ansible_ssh_user=root ansible_ssh_pass=ansible
+target1 ansible_host=192.168.55.21 ansible_user=root ansible_ssh_pass=ansible
 
 [vagrant@master test-project]$ ansible target1 -m ping -i inventory.txt 
 target1 | SUCCESS => {
