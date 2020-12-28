@@ -1,4 +1,7 @@
 Vagrant.configure("2") do |config|
+  config.vm.provision "shell",
+    inline: "sudo sed -i 's/^#PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config && sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config && systemctl restart sshd"
+
   config.vm.define "master" do |master|
     master.vm.hostname = "master"
     master.vm.box = "centos/7"
@@ -18,6 +21,5 @@ Vagrant.configure("2") do |config|
     target2.vm.box = "centos/7"
     target2.vm.network "private_network", ip: "192.168.55.22"
     target2.vm.hostname = "target2"
-  end    
-
+  end
 end

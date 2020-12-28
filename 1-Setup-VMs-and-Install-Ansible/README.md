@@ -20,11 +20,11 @@ above with their current state. For more information about a specific
 VM, run `vagrant status NAME`.
 ```
 
-ทำการ Change ssh configuration แป๊บ
+ถ้า root ssh เข้า vm ไม่ได้ ให้ทำการ Change ssh configuration และ restart
 ```
-vagrant ssh target1 -c "sudo sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config && sudo sed -ri 's/^PasswordAuthentication no\s+.*/PasswordAuthentication yes/' /etc/ssh/sshd_config && sudo systemctl restart sshd"
+vagrant ssh target1 -c "sudo sed -i 's/^#PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config && sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config && sudo systemctl restart sshd"
 
-vagrant ssh target2 -c "sudo sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config && sudo sed -ri 's/^PasswordAuthentication no\s+.*/PasswordAuthentication yes/' /etc/ssh/sshd_config && sudo systemctl restart sshd"
+vagrant ssh target2 -c "sudo sed -i 's/^#PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config && sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config && sudo systemctl restart sshd"
 ```
 
 
@@ -53,7 +53,7 @@ $ vagrant ssh master
 [vagrant@master ~]$mkdir test-project
 [vagrant@master ~$cd test-project
 [vagrant@master test-project]$cat > inventory.txt
-target1 ansible_host=192.168.55.21 ansible_user=root ansible_ssh_pass=ansible
+target1 ansible_host=192.168.55.21 ansible_user=root ansible_ssh_pass=vagrant
 
 [vagrant@master test-project]$ ansible target1 -m ping -i inventory.txt 
 target1 | SUCCESS => {
@@ -77,7 +77,7 @@ target1 | FAILED! => {
 
 ให้ทำการเพิ่มไฟล์​ ansible.cfg ที่ home directory ของ user ที่ใช้งานก็ได้ครับ
 ```
-[vagrant@master test-project]$ cat ~/.ansible.cfg 
+[vagrant@master test-project]$ cat > ~/.ansible.cfg 
 [defaults]
 host_key_checking = False
 [vagrant@master test-project]$ 
@@ -98,8 +98,8 @@ host_key_checking = False
 ทำการเพิ่ม ansible_ssh_user บน inventory ไฟล์
 ```
 [vagrant@master test-project]$ cat inventory.txt 
-target1 ansible_host=192.168.55.21 ansible_user=root ansible_ssh_pass=ansible
-target2 ansible_host=192.168.55.22 ansible_user=root ansible_ssh_pass=ansible
+target1 ansible_host=192.168.55.21 ansible_user=root ansible_ssh_pass=vagrant
+target2 ansible_host=192.168.55.22 ansible_user=root ansible_ssh_pass=vagrant
 [vagrant@master test-project]$
 ```
 
