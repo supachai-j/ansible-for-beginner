@@ -110,17 +110,35 @@
                 name: joe
                 uid: 1010
         user: name= "{{ item.name }}" state=present uid="{{ item.uid }}"
-    -  var: item=ravi
+    -  var: 
+            item:
+                name: ravi
+                uid: 1011
         user: name= "{{ item.name }}" state=present uid="{{ item.uid }}"
-    -  var: item=mani
+    -  var: 
+            item:
+                name: mani
+                uid: 1012
         user: name= "{{ item.name }}" state=present uid="{{ item.uid }}"
-    -  var: item=kiran
+    -  var: 
+            item:
+                name: kiran
+                uid: 1013
         user: name= "{{ item.name }}" state=present uid="{{ item.uid }}"
-    -  var: item=izana
+    -  var: 
+            item:
+                name: izana
+                uid: 1014
         user: name= "{{ item.name }}" state=present uid="{{ item.uid }}"
-    -  var: item=mike
+    -  var: 
+            item:
+                name: mike
+                uid: 1015
         user: name= "{{ item.name }}" state=present uid="{{ item.uid }}"
-    -  var: item=liza
+    -  var: 
+            item:
+                name: liza
+                uid: 1016
         user: name= "{{ item.name }}" state=present uid="{{ item.uid }}"
 ```
 
@@ -191,7 +209,7 @@
 ```
 
 โดยในส่วนของ with_* ก็จะมีเยอะอยู่พอสมควร
-
+```
 with_items
 with_file
 with_url
@@ -216,7 +234,7 @@ with_subelements
 with_template
 with_together
 with_varnames
-
+```
 
 ### Ansible Loop Pratices Testing
 Ansible Loops #1
