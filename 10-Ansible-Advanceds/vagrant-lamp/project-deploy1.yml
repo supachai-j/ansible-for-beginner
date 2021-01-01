@@ -1,0 +1,87 @@
+---
+- 
+# ansible playbook for Deploy Web App Project demo
+# created by supachai 
+# version 1.0
+
+  name: Install and Deploy Web App Project
+  hosts: all
+  become: yes
+  become_method: sudo
+  tasks: 
+    - 
+      name: Install firewalld
+      yum: 
+        name: firewalld
+        state: latest
+    -
+      name: Start firewalld and enabled
+      service:
+        name: firewalld
+        state: started
+        enabled: true
+    - 
+      name: Install MariaDB
+      yum: 
+        name: mariadb-server
+        state: latest
+    - 
+      name: Start MariaDB
+      service:
+        name: mariadb
+        state: started
+        enabled: true
+    -
+      name: Configure firewall for databases
+      command: 'firewall-cmd --permanent --zone=public --add-port=3306/tcp'
+    -
+      name: Restart firewalld
+      service:
+        name: firewalld
+        state: restarted
+    -
+      name: Configure databases
+      command: mysql -e "CREATE DATABASE ecomdb;CREATE USER 'ecomuser'@'localhost' IDENTIFIED BY 'ecompassword';GRANT ALL PRIVILEGES ON *.* TO 'ecomuser'@'localhost';FLUSH PRIVILEGES;"
+    -
+      name: Copy SQL scripts
+      copy:
+        src: db-load-script.sql
+        dest: /tmp
+    -
+        name: Run load sql scripts
+        shell: mysql < /tmp/db-load-script.sql
+    - 
+        name: Install httpd php git 
+        yum: name='{{ item }}' state=latest
+        with_items:
+            - httpd
+            - php
+            - php-mysql
+            - git
+    -
+      name: Configure firewall for Web Server
+      command: firewall-cmd --permanent --zone=public --add-port=80/tcp
+    -
+      name: firewalld reload
+      command: firewall-cmd --reload
+    - 
+      name: Change httpd configure index html to php file 
+      command: sed -i 's/index.html/index.php/g' /etc/httpd/conf/httpd.conf
+    -
+      name: Start and enable httpd
+      service: 
+          name: httpd
+          state: started
+          enabled: true
+    - 
+      name: Download code project with git
+      git:
+        repo: https://github.com/supachai-j/learning-app-ecommerce.git
+        dest: /var/www/html
+    -
+        name: Update index.php 
+        command: sed -i 's/172.20.1.101/localhost/g' /var/www/html/index.php
+    -
+        name: Check access to website project
+        uri:
+          url: http://localhost
